@@ -91,6 +91,6 @@ function init(options={}) {
         setTimeout(callupdate, updateDelay);
     }
 
-    callupdate();
-    calldraw();
+    setTimeout(callupdate, 0);
+    setTimeout(calldraw, 0);
 }
