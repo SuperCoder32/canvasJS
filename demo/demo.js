@@ -1,6 +1,3 @@
-let vx = 0, vy = 0;
-let x = canvas.width/2, y = canvas.height/2;
-
 function update() {
     x += vx;
     y += vy;
@@ -51,7 +48,6 @@ function keyup(key) {
     }
 }
 
-let rects = [];
 function mousedown() {
     rects.push({
         x: mouseX,
@@ -64,3 +60,8 @@ init({
     updateDelay: 10,
     clear: true
 });
+
+let vx = 0, vy = 0;
+let x = canvas.width/2, y = canvas.height/2;
+let rects = [];
+
