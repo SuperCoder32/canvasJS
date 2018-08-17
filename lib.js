@@ -52,7 +52,7 @@ function init(options={}) {
     window.mouseX = 0, window.mouseY = 0;
     window.touchX = 0, window.touchY = 0;
 
-    if (isMobile) {
+    if (isTouchScreen) {
         let touch = cb => ev => {
             let touchobj = ev.changedTouches[0];
             touchX = parseInt(touchobj.pageX - canvas.offsetLeft);
