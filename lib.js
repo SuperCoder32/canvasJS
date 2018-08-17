@@ -1,9 +1,7 @@
-var clear = true,
-    updateDelay = 10, //ms
-    fullScreen = true;
+window.isMobile = false;
 
-function isMobile() {
-	return 'ontouchstart' in window || navigator.maxTouchPoints;
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    window.isMobile = true;
 }
 
 window.requestAnimationFrame = (function(callback) {
@@ -15,72 +13,58 @@ window.requestAnimationFrame = (function(callback) {
 window.canvas = document.querySelector('canvas');
 window.context = canvas.getContext('2d');
 
-if (fullScreen) {
-    canvas.width = window.outerWidth;
-    canvas.height = window.outerHeight;
-}
-
-window.addEventListener('keydown', function(ev) {
-    ev.stopPropagation();
-    keydown(ev.key, ev.keyCode);
-});
-window.addEventListener('keyup', function(ev) {
-    ev.stopPropagation();
-    keyup(ev.key, ev.keyCode);
-});
-canvas.addEventListener('mousemove', function(ev) {
-    ev.stopPropagation();
-    mouseX = ev.pageX - canvas.offsetLeft;
-    mouseY = ev.pageY - canvas.offsetTop;
-    mousemove();
-});
-canvas.addEventListener('mousedown', function(ev) {
-    ev.stopPropagation();
-    mousedown();
-});
-canvas.addEventListener('mouseup', function(ev) {
-    ev.stopPropagation();
-    mouseup();
-});
-
-if (isMobile()) {
-	canvas.addEventListener('touchstart', function (ev) {
-		var touchobj = ev.changedTouches[0];
-		touchX = parseInt(touchobj.pageX - canvas.offsetLeft);
-		touchY = parseInt(touchobj.pageY - canvas.offsetTop);
-        touchstart();
-	});
-	canvas.addEventListener('touchend', function (ev) {
-		var touchobj = ev.changedTouches[0];
-		touchX = parseInt(touchobj.pageX - canvas.offsetLeft);
-		touchY = parseInt(touchobj.pageY - canvas.offsetTop);
-        touchend();
-	});
-	canvas.addEventListener('touchmove', function (ev) {
-		var touchobj = ev.changedTouches[0];
-		touchX = parseInt(touchobj.pageX - canvas.offsetLeft);
-		touchY = parseInt(touchobj.pageY - canvas.offsetTop);
-        touchmove();
-	});
-}
-
 function update() {}; function draw() {};
 function keydown() {}; function keyup() {};
 function mousedown() {}; function mouseup() {}; function mousemove() {};
+function touchstart() {}; function touchend() {}; function touchmove() {};
 
-function init() {
-    window.mouseX = 0;
-    window.mouseY = 0;
+function init(options={}) {
+    let clear = typeof options.clear !== 'undefined'? options.clear: true;
+    let fullScreen = typeof options.fullScreen !== 'undefined'? options.fullScreen: false;
+    let updateDelay = typeof options.updateDelay !== 'undefined'? options.updateDelay: 10;
 
-    window.touchX = 0;
-    window.touchY = 0;
+    if (fullScreen) {
+        canvas.width = window.outerWidth;
+        canvas.height = window.outerHeight;
+    }
+
+    window.onkeydown = ev => {
+        keydown(ev.key, ev.keyCode);
+    };
+    window.onkeyup = ev => {
+        keyup(ev.key, ev.keyCode);
+    };
+    
+    window.mouseX = 0, window.mouseY = 0;
+    window.touchX = 0, window.touchY = 0;
+
+    if (isMobile) {
+        let touch = cb => ev => {
+            let touchobj = ev.changedTouches[0];
+            touchX = parseInt(touchobj.pageX - canvas.offsetLeft);
+            touchY = parseInt(touchobj.pageY - canvas.offsetTop);
+            cb();
+        };
+        canvas.ontouchstart = touch(touchstart);
+        canvas.ontouchend = touch(touchend);
+        canvas.ontouchmove = touch(touchmove);
+    } else {
+        let mouse = cb => ev => {
+            mouseX = ev.pageX - canvas.offsetLeft;
+            mouseY = ev.pageY - canvas.offsetTop;
+            cb();
+        };
+        canvas.onmousemove = mouse(mousemove); 
+        canvas.onmousedown = mouse(mousedown);
+        canvas.onmouseup = mouse(mouseup); 
+    }
 
     if (clear) {
         function calldraw() {
             context.clearRect(0, 0, canvas.width, canvas.height);
             draw();
             requestAnimationFrame(calldraw);
-		}
+        }
     } else {
         function calldraw() {
             draw();
