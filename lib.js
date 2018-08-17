@@ -1,7 +1,17 @@
-window.isMobile = false;
+function checkTouchScreen() {
+	let prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
+	let mq = function(query) {
+		return window.matchMedia(query).matches;
+	}
+	if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) 
+		return true;
+	let query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
+	return mq(query);
+}
 
-if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    window.isMobile = true;
+window.isTouchScreen = false;
+if (checkTouchScreen()) {
+    window.isTouchScreen = true;
 }
 
 window.requestAnimationFrame = (function(callback) {
