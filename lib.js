@@ -24,8 +24,12 @@ function init(options={}) {
     let updateDelay = typeof options.updateDelay !== 'undefined'? options.updateDelay: 10;
 
     if (fullScreen) {
-        canvas.width = window.outerWidth;
-        canvas.height = window.outerHeight;
+        let resize = () => {
+            canvas.width = window.outerWidth;
+            canvas.height = window.outerHeight;
+        };
+        resize();
+        window.onresize = resize;
     }
 
     window.onkeydown = ev => {

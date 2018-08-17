@@ -9,6 +9,9 @@ function update() {
 context.strokeStyle = 'black';
 
 function draw() {
+    context.fillStyle = 'gold';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = 'black';
     context.fillRect(x, y, 50, 50);
 
     for (let rect of rects) {
